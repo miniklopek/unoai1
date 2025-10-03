@@ -9,20 +9,23 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/text-bison-001:generateMessage?key=${GEMINI_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: message }] }]
+          "input": {
+            "text": message
+          }
         })
       }
     );
 
     const data = await response.json();
-    console.log("Gemini response:", data);
+    console.log("Gemini response:", JSON.stringify(data, null, 2));
 
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "❌ Пустой ответ";
+    // Ответ модели text-bison-001
+    const reply = data?.output?.[0]?.content?.[0]?.text || "❌ Пустой ответ";
     res.status(200).json({ reply });
 
   } catch (err) {
